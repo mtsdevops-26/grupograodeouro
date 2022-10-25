@@ -1,2 +1,2 @@
-# grupograodeouro
+# grupo grao de ouro
 web
