@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>57165d4e-b52f-467f-9298-8daa5b879a45</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.22">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\building blocks\Gouro.Core\Gouro.Core.csproj" />
+    <ProjectReference Include="..\..\building blocks\Gouro.MessageBus\Gouro.MessageBus.csproj" />
+    <ProjectReference Include="..\..\building blocks\Gouro.WebApi.Core\Gouro.WebApi.Core.csproj" />
+    <ProjectReference Include="..\Gouro.Pedidos.Domain\Gouro.Pedidos.Domain.csproj" />
+    <ProjectReference Include="..\Gouro.Pedidos.Infra\Gouro.Pedidos.Infra.csproj" />
+  </ItemGroup>
+
+
+</Project>

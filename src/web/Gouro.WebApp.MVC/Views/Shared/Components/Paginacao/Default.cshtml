@@ -1,0 +1,47 @@
+﻿@model IPagedList
+
+<nav>
+    <ul class="pagination justify-content-center">
+        @{
+            if (@Model.PageIndex < 2)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="@Model.ReferenceAction" asp-route-ps="@Model.PageSize" asp-route-page="@(Model.PageIndex - 1)" asp-route-q="@Model.Query">Anterior</a>
+                </li>
+            }
+            for (var i = 1; i < Model.TotalPages + 1; i++)
+            {
+                if (i == Model.PageIndex)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="@Model.ReferenceAction" asp-route-ps="@Model.PageSize" asp-route-page="@i" asp-route-q="@Model.Query">@i</a>
+                    </li>
+                }
+            }
+            if (@Model.PageIndex >= Model.TotalPages)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Próxima</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="@Model.ReferenceAction" asp-route-ps="@Model.PageSize" asp-route-page="@(Model.PageIndex + 1)" asp-route-q="@Model.Query">Próxima</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>

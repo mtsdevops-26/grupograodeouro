@@ -1,0 +1,154 @@
+version: "3"
+
+services:
+
+    rabbitmq:
+        image: rabbitmq:3.9-management
+        container_name: rabbit_gouro
+        environment: 
+            RABBITMQ_DEFAULT_USER: "gouro"
+            RABBITMQ_DEFAULT_PASS: "gouro"
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+            
+    sql-server:
+        image: desenvolvedorio/nerdstore-sql-server:latest
+        container_name: gouro-sql-server
+        build:
+            context: ../sql
+            dockerfile: ./Dockerfile
+        environment:
+        ports:
+            - "1433:1433"
+        environment:
+            SA_PASSWORD: "MinhaDb@123"
+            ACCEPT_EULA: "Y"
+    
+    web-mvc:
+        image: gouro-web-mvc-ecommerce:latest
+        container_name: gouro-web-mvc-ecommerce
+        build:
+            context: ../src
+            dockerfile: ./web/Gouro.WebApp.MVC/Dockerfile
+        ports:
+            - "5001:5001"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5001
+        depends_on:
+            - api-catalogo
+            - api-identidade
+            - api-cliente
+            - api-bff-compras
+            
+    api-identidade:
+        image: gouro-api-identidade:latest
+        container_name: gouro-api-identidade
+        build:
+            context: ../src
+            dockerfile: ./services/Gouro.Identidade.API/Dockerfile
+        ports:
+            - "5101:5101"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5101
+        depends_on:
+            - rabbitmq
+            - sql-server
+            
+    api-carrinho:
+        image: gouro-api-carrinho:latest
+        container_name: gouro-api-carrinho
+        build:
+            context: ../src
+            dockerfile: ./services/Gouro.Carrinho.API/Dockerfile
+        ports:
+            - "5201:5201"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5201
+        depends_on:
+            - rabbitmq
+            - api-identidade
+            - sql-server
+            
+    api-catalogo:
+        image: gouro-api-catalogo:latest
+        container_name: gouro-api-catalogo
+        build:
+            context: ../src
+            dockerfile: ./services/Gouro.Catalogo.API/Dockerfile
+        environment: 
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5301
+        depends_on:
+            - rabbitmq
+            - sql-server
+            
+    api-cliente:
+        image: gouro-api-cliente:latest
+        container_name: gouro-api-cliente
+        build:
+            context: ../src
+            dockerfile: ./services/Gouro.Clientes.API/Dockerfile
+        ports:
+            - "5401:5401"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5401
+        depends_on:
+            - rabbitmq
+            - api-identidade
+            - sql-server
+            
+    api-bff-compras:
+        image: gouro-api-bff-compras:latest
+        container_name: gouro-api-bff-compras
+        build:
+            context: ../src
+            dockerfile: ./api gateways/Gouro.Bff.Compras/Dockerfile
+        ports:
+            - "5501:5501"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5501
+        depends_on:
+            - rabbitmq
+            - api-identidade
+            - api-carrinho
+            - api-pagamento
+            - api-pedido
+            
+    api-pagamento:
+        image: gouro-api-pagamento:latest
+        container_name: gouro-api-pagamento
+        build:
+            context: ../src
+            dockerfile: ./services/Gouro.Pagamentos.API/Dockerfile
+        ports:
+            - "5601:5601"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5601
+        depends_on:
+            - rabbitmq
+            - api-identidade
+            - api-pedido
+            - sql-server
+            
+    api-pedido:
+        image: gouro-api-pedido:latest
+        container_name: gouro-api-pedido
+        build:
+            context: ../src
+            dockerfile: ./services/Gouro.Pedidos.API/Dockerfile
+        ports:
+            - "5701:5701"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://*:5701
+        depends_on:
+            - rabbitmq
+            - api-identidade
+            - sql-server
